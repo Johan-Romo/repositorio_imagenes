@@ -1,13 +1,27 @@
-// frontend/src/App.js
 import React from 'react';
-import ImageGallery from './components/ImageGallery';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AdminLogin from './components/AdminLogin';
+import AdminPanel from './components/AdminPanel';
+import UploadPhoto from './components/UploadPhoto';
+import ProtectedRoute from './components/ProtectedRoute';
 
-function App() {
+const App = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <ImageGallery />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<UploadPhoto />} />
+        <Route path="/login" element={<AdminLogin />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

@@ -1,35 +1,30 @@
-// backend/server.js
-// Importamos las dependencias necesarias
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const photoRoutes = require('./routes/photoRoutes');
+const { router: userRoutes } = require('./routes/adminRoutes'); // Extraer solo el router
 
-// Creamos la aplicación Express
+dotenv.config();
 const app = express();
 
-// Configuramos los middlewares
+// Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Conectamos a MongoDB Atlas
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+// Conexión a MongoDB Atlas
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 })
-.then(() => console.log('Conectado a MongoDB Atlas'))
-.catch((err) => console.error('Error conectando a MongoDB Atlas:', err));
+  .then(() => console.log('Conexión exitosa a MongoDB Atlas'))
+  .catch((err) => console.error('Error al conectar a MongoDB:', err));
 
-// Configuramos las rutas básicas
-app.get('/', (req, res) => {
-    res.send('API de Galería de Imágenes');
-});
+// Rutas
+app.use('/api/photos', photoRoutes); // Rutas de fotos
+app.use('/api/admin', userRoutes);   // Rutas de administrador
 
-// Importamos y usamos las rutas de imágenes
-app.use('/api/images', require('./routes/imageRoutes'));
-
-// Iniciamos el servidor
+// Servidor
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT}`));
